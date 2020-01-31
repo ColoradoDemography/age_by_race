@@ -3,7 +3,6 @@ source("setup.R")
 function(input, output, session) {
 
 observeEvent( input$goButton,{
-  browser()
     cty <- popPlace(DOLAPool)
     selcty <- input$county
     selyr<- input$year
