@@ -153,7 +153,7 @@ f.SYARace[is.na(f.SYARace)] <- 0
 ggSYALINE <- plot_ly(f.SYARace, 
                       x = ~Age, y = ~Population, name=~race, type = 'scatter', 
                       mode = 'lines', text = ~indText, hoverinfo = 'text') %>%
-     layout( title=grTitle, yaxis = yAxis, xaxis=xAxis,
+     layout( title=list(text=grTitle, size=15),yaxis = yAxis, xaxis=xAxis,
           showlegend = TRUE, hoverlabel = "right", margin = list(l = 50, r = 50, t = 60, b = 100),  
                       annotations = list(text = outCAP,
                       font = list(size = 10), showarrow = FALSE, yref = 'paper', y = -0.3))
@@ -167,7 +167,7 @@ ggSYABARW <- f.SYARace %>%
                                     '<br>',
                                     '<sup>',
                                     'White, Not Hispanic',
-                                    '</sup>')), 
+                                    '</sup>'),titlefont=list(size=12)), 
           yaxis = yAxis, xaxis=xAxis,
           hoverlabel = "right", margin = list(l = 50, r = 50, t = 60, b = 100),  
                       annotations = list(text = outCAP,
@@ -181,7 +181,7 @@ ggSYABARH <- f.SYARace %>%
                                     '<br>',
                                     '<sup>',
                                     'Hispanic',
-                                    '</sup>')), 
+                                    '</sup>'),titlefont=list(size=12)), 
           yaxis = yAxis, xaxis=xAxis,
           hoverlabel = "right", margin = list(l = 50, r = 50, t = 60, b = 100),  
                       annotations = list(text = outCAP,
@@ -195,7 +195,7 @@ ggSYABARB <- f.SYARace %>%
                                     '<br>',
                                     '<sup>',
                                     'Black, Not Hispanic',
-                                    '</sup>')), 
+                                    '</sup>'),titlefont=list(size=12)), 
           yaxis = yAxis, xaxis=xAxis,
           hoverlabel = "right", margin = list(l = 50, r = 50, t = 60, b = 100),  
                       annotations = list(text = outCAP,
@@ -209,7 +209,7 @@ ggSYABARAS <- f.SYARace %>%
                                     '<br>',
                                     '<sup>',
                                     'Asian/Pacific Islander, Not Hispanic',
-                                    '</sup>')), 
+                                    '</sup>'),titlefont=list(size=12)), 
           yaxis = yAxis, xaxis=xAxis,
           hoverlabel = "right", margin = list(l = 50, r = 50, t = 60, b = 100),  
                       annotations = list(text = outCAP,
@@ -224,37 +224,20 @@ ggSYABARAM <- f.SYARace %>%
                                     '<br>',
                                     '<sup>',
                                     'American Indian, Not Hispanic',
-                                    '</sup>')), 
+                                    '</sup>'),titlefont=list(size=12)), 
           yaxis = yAxis, xaxis=xAxis,
           hoverlabel = "right", margin = list(l = 50, r = 50, t = 60, b = 100),  
                       annotations = list(text = outCAP,
                       font = list(size = 10), showarrow = FALSE, yref = 'paper', y = -0.3))
 
+
+#Restructuring data
+
+f.outData <- spread(f.SYARace[,1:3],race,Population)
+
 outlist <- list("LINE" = ggSYALINE, "WHITE" = ggSYABARW, "HISP" = ggSYABARH, "BLACK" = ggSYABARB,
-                "ASIAN" = ggSYABARAS, "AMIND" = ggSYABARAM)
+                "ASIAN" = ggSYABARAS, "AMIND" = ggSYABARAM, "CHDATA" = f.outData)
 return(outlist)
 }
 
-genData <- function(DBPool,ctyfips, ctyname, datyear) {
-
-plt_data <- genPlotData(DBPool = DBPool,fips = ctyfips,yr = datyear)
-# Generate the plotly pairs
-f.SYARace <- plt_data$data
-
-f.SYARace$race <- plyr::revalue(f.SYARace$race, c("Hispanic Origin" = "Hispanic",
-                                                  "American Indian" = "American Indian, Not Hispanic",
-                                                  "Asian/Pacific Islander" = "Asian/Pacific Islander, Not-Hispanic",
-                                                  "Black" = "Black, Not Hispanic",
-                                                  "White" = "White, Not Hispanic"))
-
-
-
-
-f.SYARace$race <- factor(f.SYARace$race,levels= c("White, Not Hispanic",
-                                                  "Hispanic",
-                                                  "Black, Not Hispanic",
-                                                   "Asian/Pacific Islander, Not-Hispanic",
-                                                   "American Indian, Not Hispanic"))
-f.SYARace[is.na(f.SYARace)] <- 0
-}
 

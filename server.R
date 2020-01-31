@@ -17,5 +17,14 @@ output$BLACK <- renderPlotly({OutPlot[["BLACK"]]})
 output$ASIAN <- renderPlotly({OutPlot[["ASIAN"]]})
 output$AMIND <- renderPlotly({OutPlot[["AMIND"]]})
 
+output$CHDATA=downloadHandler(
+    filename= function(){
+      paste0("Age_by_Race_",selcty,"_",selyr,".csv")
+    },
+    content= function(file){
+      write.csv(OutPlot[["CHDATA"]], file, row.names=FALSE)
+    }
+  )
+
 })
 }

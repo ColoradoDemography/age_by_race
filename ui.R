@@ -20,8 +20,8 @@ function(req) {
                 hispanic_chart = plotlyOutput("HISP"),
                 black_chart = plotlyOutput("BLACK"),
                 asian_chart = plotlyOutput("ASIAN"),
-                am_chart = plotlyOutput("AMIND")
-                )
+                am_chart = plotlyOutput("AMIND"),
+                dlBtn = downloadButton("CHDATA","Download Data (CSV)"))
  }
 
 
