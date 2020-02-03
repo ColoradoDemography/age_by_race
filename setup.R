@@ -102,37 +102,7 @@ genPlotData <- function(DBPool,fips,yr){
  f.SYARace <-  dbGetQuery(DBPool, sqlSYARace) 
  
  # Assembling data file
-   f.SYARaceHisp <- f.SYARace %>% 
-             filter(ethnicity == "Hispanic Origin"  & age < 85) %>%
-             mutate(race = "Hispanic Origin") %>%
-             group_by(race,age) %>%
-             summarise(Population = sum(count)) 
-   
-   f.SYARaceNHisp <- f.SYARace %>% 
-             filter(ethnicity != "Hispanic Origin"  & age < 85) %>%
-             group_by(race,age) %>%
-             summarise(Population = sum(count))
- 
-    f.SYARaceOut <- bind_rows(f.SYARaceHisp, f.SYARaceNHisp)
-    f.SYARaceOut$Population <- ceiling(f.SYARaceOut$Population)
-    names(f.SYARaceOut)[2] <- "Age"
-    
-    f.SYARaceOut$race <- plyr::revalue(f.SYARaceOut$race, c("Hispanic Origin" = "Hispanic",
-                                                  "American Indian" = "American Indian, Not Hispanic",
-                                                  "Asian/Pacific Islander" = "Asian/Pacific Islander, Not Hispanic",
-                                                  "Black" = "Black, Not Hispanic",
-                                                  "White" = "White, Not Hispanic"))
 
-
-
-
-    f.SYARaceOut$race <- factor(f.SYARaceOut$race,levels= c("White, Not Hispanic",
-                                                  "Hispanic",
-                                                  "Black, Not Hispanic",
-                                                   "Asian/Pacific Islander, Not Hispanic",
-                                                   "American Indian, Not Hispanic"))
-
-    
 #Dataset with the  85+    
        f.SYARaceH85 <- f.SYARace %>% 
              filter(ethnicity == "Hispanic Origin") %>%
@@ -166,6 +136,9 @@ genPlotData <- function(DBPool,fips,yr){
                                                   "Black, Not Hispanic",
                                                    "Asian/Pacific Islander, Not Hispanic",
                                                    "American Indian, Not Hispanic"))
+    
+    f.SYARaceOut <- f.SYARace85 %>% filter(Age != "85+")
+    f.SYARaceOut$Age <- as.numeric(f.SYARaceOut$Age)
     
     outlist <- list("chartData"= f.SYARaceOut, "DLData" = f.SYARace85)
 
