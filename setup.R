@@ -116,17 +116,8 @@ genPlotData <- function(DBPool,fips,yr){
     f.SYARaceOut <- bind_rows(f.SYARaceHisp, f.SYARaceNHisp)
     f.SYARaceOut$Population <- ceiling(f.SYARaceOut$Population)
     names(f.SYARaceOut)[2] <- "Age"
-
-return(f.SYARaceOut)
-}
-
-# GenPlot returns the Plots
-GenPlot <- function(DBPool,ctyfips, ctyname, datyear) {
-  
-ctysel <- listTofips(ctyfips,ctyname)
-f.SYARace <- genPlotData(DBPool = DBPool,fips = ctysel,yr = datyear)
-
-f.SYARace$race <- plyr::revalue(f.SYARace$race, c("Hispanic Origin" = "Hispanic",
+    
+    f.SYARaceOut$race <- plyr::revalue(f.SYARaceOut$race, c("Hispanic Origin" = "Hispanic",
                                                   "American Indian" = "American Indian, Not Hispanic",
                                                   "Asian/Pacific Islander" = "Asian/Pacific Islander, Not Hispanic",
                                                   "Black" = "Black, Not Hispanic",
@@ -135,11 +126,61 @@ f.SYARace$race <- plyr::revalue(f.SYARace$race, c("Hispanic Origin" = "Hispanic"
 
 
 
-f.SYARace$race <- factor(f.SYARace$race,levels= c("White, Not Hispanic",
+    f.SYARaceOut$race <- factor(f.SYARaceOut$race,levels= c("White, Not Hispanic",
                                                   "Hispanic",
                                                   "Black, Not Hispanic",
                                                    "Asian/Pacific Islander, Not Hispanic",
                                                    "American Indian, Not Hispanic"))
+
+    
+#Dataset with the  85+    
+       f.SYARaceH85 <- f.SYARace %>% 
+             filter(ethnicity == "Hispanic Origin") %>%
+             mutate(race = "Hispanic Origin") %>%
+             group_by(race,age) %>%
+             summarise(Population = sum(count)) 
+   
+   f.SYARaceNH85 <- f.SYARace %>% 
+             filter(ethnicity != "Hispanic Origin") %>%
+             group_by(race,age) %>%
+             summarise(Population = sum(count))
+ 
+    f.SYARace85 <- bind_rows(f.SYARaceH85, f.SYARaceNH85)
+    f.SYARace85$Population <- ceiling(f.SYARace85$Population)
+    names(f.SYARace85)[2] <- "Age"
+
+    f.SYARace85$Age <- ifelse(f.SYARace85$Age == 85,"85+",str_pad(f.SYARace85$Age,2,"0", side="left"))
+
+
+    f.SYARace85$race <- plyr::revalue(f.SYARace85$race, c("Hispanic Origin" = "Hispanic",
+                                                  "American Indian" = "American Indian, Not Hispanic",
+                                                  "Asian/Pacific Islander" = "Asian/Pacific Islander, Not Hispanic",
+                                                  "Black" = "Black, Not Hispanic",
+                                                  "White" = "White, Not Hispanic"))
+
+
+
+
+    f.SYARace85$race <- factor(f.SYARace85$race,levels= c("White, Not Hispanic",
+                                                  "Hispanic",
+                                                  "Black, Not Hispanic",
+                                                   "Asian/Pacific Islander, Not Hispanic",
+                                                   "American Indian, Not Hispanic"))
+    
+    outlist <- list("chartData"= f.SYARaceOut, "DLData" = f.SYARace85)
+
+return(outlist)
+}
+
+# GenPlot returns the Plots
+GenPlot <- function(DBPool,ctyfips, ctyname, datyear) {
+  
+ctysel <- listTofips(ctyfips,ctyname)
+datalist <- genPlotData(DBPool = DBPool,fips = ctysel,yr = datyear)
+f.SYARace <- datalist$chartData
+f.SYARaceDL <- datalist$DLData
+
+
 f.SYARace[is.na(f.SYARace)] <- 0
  
    f.SYARace$indText  <- paste0(f.SYARace$race," Age: ",f.SYARace$Age," Estimate: ",NumFmt(f.SYARace$Population)) 
@@ -233,7 +274,7 @@ ggSYABARAM <- f.SYARace %>%
 
 #Restructuring data
 
-f.outData <- spread(f.SYARace[,1:3],race,Population)
+f.outData <- spread(f.SYARaceDL[,1:3],race,Population)
 
 outlist <- list("LINE" = ggSYALINE, "WHITE" = ggSYABARW, "HISP" = ggSYABARH, "BLACK" = ggSYABARB,
                 "ASIAN" = ggSYABARAS, "AMIND" = ggSYABARAM, "CHDATA" = f.outData)
