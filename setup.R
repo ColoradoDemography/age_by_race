@@ -34,7 +34,9 @@ DOLAPool <-  dbPool(
 
 dbGetInfo(DOLAPool)
 
-
+onStop(function(){
+  poolClose(DOLAPool)
+})
 
 # Support Functions
 # NumFmt formats a numberic variable to a whold number, comma separated value
@@ -229,7 +231,7 @@ ggSYABARH <- ggplotly(hBar) %>%
                                     '<br>',
                                     '<sup>',
                                     'Hispanic',
-                                    '</sup>'),titlefont=list(size=8)), 
+                                    '</sup>'),titlefont=list(size=10)), 
           yaxis = yAxis, xaxis=xAxis,
           hoverlabel = "right", margin = list(l = 50, r = 50, t = 60, b = 100),  
                       annotations = list(text = outCAP,
