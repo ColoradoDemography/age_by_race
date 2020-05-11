@@ -162,15 +162,24 @@ f.SYARace[is.na(f.SYARace)] <- 0
     xAxis <- list(range=c(0,85), dtick = 5, tick0 = 5, tickmode = "linear", title = "Age")
     yAxis <- list(separators = ',.', title = 'Population')
     
-  
+#Adjustments for Margins
+    m <- list(
+      l = 50,
+      r = 50,
+      b = 100,
+      t = 100,
+      pad = 4
+    )
+      
 
 ggSYALINE <- plot_ly(f.SYARace, 
                       x = ~Age, y = ~Population, name=~race, type = 'scatter', 
                       mode = 'lines', text = ~indText, hoverinfo = 'text') %>%
      layout( title=list(text=grTitle, size=15),yaxis = yAxis, xaxis=xAxis,
-          showlegend = TRUE, hoverlabel = "right", margin = list(l = 50, r = 50, t = 60, b = 100),  
+             showlegend = TRUE, hoverlabel = "right", margin = list(l = 50, r = 50, t = 60, b = 100),  
                       annotations = list(text = outCAP,
-                      font = list(size = 10), showarrow = FALSE, yref = 'paper', y = -0.3))
+                      font = list(size = 10), showarrow = FALSE, yref = 'paper', y = -0.3),
+              autosize = T, margin = m)
 
 
 ggSYABARW <- f.SYARace %>%
