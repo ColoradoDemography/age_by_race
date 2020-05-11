@@ -35,10 +35,6 @@ DOLAPool <-  dbPool(
 dbGetInfo(DOLAPool)
 
 
-onStop(function(){
-  poolClose(DOLAPool)
-})
-
 
 # Support Functions
 # NumFmt formats a numberic variable to a whold number, comma separated value
@@ -175,11 +171,10 @@ f.SYARace[is.na(f.SYARace)] <- 0
 ggSYALINE <- plot_ly(f.SYARace, 
                       x = ~Age, y = ~Population, name=~race, type = 'scatter', 
                       mode = 'lines', text = ~indText, hoverinfo = 'text') %>%
-     layout( title=list(text=grTitle, size=15),yaxis = yAxis, xaxis=xAxis,
+     layout( title=list(text=grTitle, size=15, y=1),yaxis = yAxis, xaxis=xAxis,
              showlegend = TRUE, hoverlabel = "right", margin = list(l = 50, r = 50, t = 60, b = 100),  
                       annotations = list(text = outCAP,
-                      font = list(size = 10), showarrow = FALSE, yref = 'paper', y = -0.3),
-              autosize = T, margin = m)
+                      font = list(size = 10), showarrow = FALSE, yref = 'paper', y = -0.3))
 
 
 ggSYABARW <- f.SYARace %>%
