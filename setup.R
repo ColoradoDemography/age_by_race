@@ -169,8 +169,7 @@ f.SYARace[is.na(f.SYARace)] <- 0
               labs(x = 'Age',
                y = 'Population',
                color = "Race/Ethnicity",
-               title = grTitle,
-               caption = outCAP) +
+               title = grTitle) +
       theme(plot.title = element_text(hjust = 0.5, size=16),
             axis.text=element_text(size=8, color="grey50"),
             axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
@@ -178,32 +177,38 @@ f.SYARace[is.na(f.SYARace)] <- 0
             panel.grid.major = element_line(color="grey90"), panel.grid.minor = element_blank(),
             legend.position = "right")
 
-
-#   ggSYALINE <- plot_ly(f.SYARace, 
-#                       x = ~Age, y = ~Population, name=~race, type = 'scatter', 
-#                         mode = 'lines', text = ~indText, hoverinfo = 'text') %>%
-#     layout( title=list(text=grTitle, size=15, yref = 'paper', y=0.5),yaxis = yAxis, xaxis=xAxis,
-#              showlegend = TRUE, hoverlabel = "right", margin = list(l = 50, r = 50, t = 60, b = 100),  
-#              annotations = list(text = outCAP,
-#                                font = list(size = 10), showarrow = FALSE, yref = 'paper', y = -0.3))
- 
+       ggSYALINE <-ggplotly(ggline) %>% layout( yaxis = yAxis, xaxis=xAxis,
+                                                hoverlabel = "right", margin = list(l = 50, r = 50, t = 60, b = 100),  
+                                                annotations = list(text = outCAP,
+                                                                   font = list(size = 10), showarrow = FALSE, yref = 'paper', y = -0.4))
     
-       ggSYALINE <-ggplotly(ggline)
-    
+       wBar <- f.SYARace %>%
+         filter(race == "White, Not Hispanic") %>%
+         ggplot() +
+         geom_bar(aes(x = Age, y = Population), fill = "blue", stat = "identity", color="black") +
+         scale_x_continuous(limits= c(0,85), breaks=seq(0,85, by=5)) +
+         scale_y_continuous(labels = scales::comma) +
+         labs(x = 'Age',
+              y = 'Population') +
+         theme(plot.title = element_text(hjust = 0.5, size=16),
+               axis.text=element_text(size=8, color="grey50"),
+               axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
+               panel.background = element_rect(fill = "white", colour = "grey50"),
+               panel.grid.major = element_line(color="grey90"), panel.grid.minor = element_blank(),
+               legend.position = "none")
+       
+       
 
-ggSYABARW <- f.SYARace %>%
-             filter(race == "White, Not Hispanic") %>%
-             plot_ly( x = ~Age, y = ~Population, type = 'bar', color = I("blue"),
-                       text = ~indText, hoverinfo = 'text') %>%
-     layout( title=list(text = paste0(grTitle,
+ggSYABARW <-  ggplotly(wBar) %>%
+              layout( title=list(text = paste0(grTitle,
                                     '<br>',
                                     '<sup>',
                                     'White, Not Hispanic',
                                     '</sup>'),titlefont=list(size=12)), 
-          yaxis = yAxis, xaxis=xAxis,
-          hoverlabel = "right", margin = list(l = 50, r = 50, t = 60, b = 100),  
-                      annotations = list(text = outCAP,
-                      font = list(size = 10), showarrow = FALSE, yref = 'paper', y = -0.3))
+              yaxis = yAxis, xaxis=xAxis,
+              hoverlabel = "right", margin = list(l = 50, r = 50, t = 60, b = 100),  
+                          annotations = list(text = outCAP,
+                          font = list(size = 10), showarrow = FALSE, yref = 'paper', y = -0.4))
 
 ggSYABARH <- f.SYARace %>%
              filter(race == "Hispanic") %>%
