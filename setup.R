@@ -190,10 +190,8 @@ f.SYARace[is.na(f.SYARace)] <- 0
          scale_x_continuous(limits= c(0,85), breaks=seq(0,85, by=5)) +
          scale_y_continuous(labels = scales::comma) +
          labs(x = 'Age',
-              y = 'Population',
-              title = grTitle) +
-         theme(plot.title = element_text(hjust = 0.5, size=12),
-               axis.text=element_text(size=8, color="grey50"),
+              y = 'Population') +
+         theme(axis.text=element_text(size=8, color="grey50"),
                axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
                panel.background = element_rect(fill = "white", colour = "grey50"),
                panel.grid.major = element_line(color="grey90"), panel.grid.minor = element_blank(),
