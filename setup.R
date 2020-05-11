@@ -159,7 +159,7 @@ f.SYARace[is.na(f.SYARace)] <- 0
     yAxis <- list(separators = ',.', title = 'Population')
     
     colorset <- c("blue", "orange", "green", "red", "purple")
-browser()
+
     ggline <- f.SYARace %>% ggplot() +
               aes(x = Age, y = Population, color = race) +
               geom_line() +
