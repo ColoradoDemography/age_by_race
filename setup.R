@@ -178,7 +178,7 @@ f.SYARace[is.na(f.SYARace)] <- 0
             panel.grid.major = element_line(color="grey90"), panel.grid.minor = element_blank(),
             legend.position = "right")
 
-       ggSYALINE <-ggplotly(ggline, tooltip = c("Race","Age", "Population")) %>% layout(yaxis = yAxis, xaxis=xAxis,
+       ggSYALINE <-ggplotly(ggline) %>% layout(yaxis = yAxis, xaxis=xAxis,
                                                 hoverlabel = "right", margin = list(l = 50, r = 50, t = 60, b = 100),  
                                                 annotations = list(text = outCAP,
                                                                    font = list(size = 10), showarrow = FALSE, yref = 'paper', y = -0.4))
