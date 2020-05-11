@@ -113,12 +113,13 @@ genPlotData <- function(DBPool,fips,yr){
  
     f.SYARace85 <- bind_rows(f.SYARaceH85, f.SYARaceNH85)
     f.SYARace85$Population <- ceiling(f.SYARace85$Population)
-    names(f.SYARace85)[2] <- "Age"
+    
+    names(f.SYARace85) <- c("Race", "Age", "Population")
 
     f.SYARace85$Age <- ifelse(f.SYARace85$Age == 85,"85+",str_pad(f.SYARace85$Age,2,"0", side="left"))
 
 
-    f.SYARace85$race <- plyr::revalue(f.SYARace85$race, c("Hispanic Origin" = "Hispanic",
+    f.SYARace85$Race <- plyr::revalue(f.SYARace85$Race, c("Hispanic Origin" = "Hispanic",
                                                   "American Indian" = "American Indian, Not Hispanic",
                                                   "Asian/Pacific Islander" = "Asian/Pacific Islander, Not Hispanic",
                                                   "Black" = "Black, Not Hispanic",
@@ -127,7 +128,7 @@ genPlotData <- function(DBPool,fips,yr){
 
 
 
-    f.SYARace85$race <- factor(f.SYARace85$race,levels= c("White, Not Hispanic",
+    f.SYARace85$Race <- factor(f.SYARace85$Race,levels= c("White, Not Hispanic",
                                                   "Hispanic",
                                                   "Black, Not Hispanic",
                                                    "Asian/Pacific Islander, Not Hispanic",
@@ -151,8 +152,8 @@ f.SYARaceDL <- datalist$DLData
 
 
 f.SYARace[is.na(f.SYARace)] <- 0
- 
-   f.SYARace$indText  <- paste0(f.SYARace$race," Age: ",f.SYARace$Age," Estimate: ",NumFmt(f.SYARace$Population)) 
+
+  f.SYARace$indText  <- paste0(f.SYARace$Race," Age: ",f.SYARace$Age," Estimate: ",NumFmt(f.SYARace$Population)) 
    outCAP <- paste0("Colorado State Demography Office, Date Printed: ",as.character(format(Sys.Date(),"%m/%d/%Y")))
    grTitle <- paste0("Single Year of Age by Race: ",ctyname,", ",datyear)  
     xAxis <- list(range=c(0,85), dtick = 5, tick0 = 5, tickmode = "linear", title = "Age")
@@ -161,7 +162,7 @@ f.SYARace[is.na(f.SYARace)] <- 0
     colorset <- c("blue", "orange", "green", "red", "purple")
 
     ggline <- f.SYARace %>% ggplot() +
-              aes(x = Age, y = Population, color = race) +
+              aes(x = Age, y = Population, color = Race) +
               geom_line() +
               scale_x_continuous(limits= c(0,85), breaks=seq(0,85, by=5)) +
               scale_y_continuous(labels = scales::comma) +
@@ -177,13 +178,13 @@ f.SYARace[is.na(f.SYARace)] <- 0
             panel.grid.major = element_line(color="grey90"), panel.grid.minor = element_blank(),
             legend.position = "right")
 
-       ggSYALINE <-ggplotly(ggline) %>% layout( yaxis = yAxis, xaxis=xAxis,
+       ggSYALINE <-ggplotly(ggline, tooltip = c("Race","Age", "Population")) %>% layout(yaxis = yAxis, xaxis=xAxis,
                                                 hoverlabel = "right", margin = list(l = 50, r = 50, t = 60, b = 100),  
                                                 annotations = list(text = outCAP,
                                                                    font = list(size = 10), showarrow = FALSE, yref = 'paper', y = -0.4))
     
        wBar <- f.SYARace %>%
-         filter(race == "White, Not Hispanic") %>%
+         filter(Race == "White, Not Hispanic") %>%
          ggplot() +
          geom_bar(aes(x = Age, y = Population), fill = "blue", stat = "identity", color="black") +
          scale_x_continuous(limits= c(0,85), breaks=seq(0,85, by=5)) +
@@ -191,7 +192,7 @@ f.SYARace[is.na(f.SYARace)] <- 0
          labs(x = 'Age',
               y = 'Population',
               title = grTitle) +
-         theme(plot.title = element_text(hjust = 0.5, size=16),
+         theme(plot.title = element_text(hjust = 0.5, size=12),
                axis.text=element_text(size=8, color="grey50"),
                axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
                panel.background = element_rect(fill = "white", colour = "grey50"),
@@ -212,21 +213,21 @@ ggSYABARW <-  ggplotly(wBar) %>%
                           font = list(size = 10), showarrow = FALSE, yref = 'paper', y = -0.4))
 
 ggSYABARH <- f.SYARace %>%
-             filter(race == "Hispanic") %>%
+             filter(Race == "Hispanic") %>%
              plot_ly( x = ~Age, y = ~Population, type = 'bar', color = I("orange"),
                        text = ~indText, hoverinfo = 'text') %>%
      layout( title=list(text = paste0(grTitle,
                                     '<br>',
                                     '<sup>',
                                     'Hispanic',
-                                    '</sup>'),titlefont=list(size=12)), 
+                                    '</sup>'),titlefont=list(size=8)), 
           yaxis = yAxis, xaxis=xAxis,
           hoverlabel = "right", margin = list(l = 50, r = 50, t = 60, b = 100),  
                       annotations = list(text = outCAP,
                       font = list(size = 10), showarrow = FALSE, yref = 'paper', y = -0.3))
 
 ggSYABARB <- f.SYARace %>%
-             filter(race == "Black, Not Hispanic") %>%
+             filter(Race == "Black, Not Hispanic") %>%
              plot_ly( x = ~Age, y = ~Population, type = 'bar', color = I("green"),
                        text = ~indText, hoverinfo = 'text') %>%
      layout( title=list(text = paste0(grTitle,
@@ -240,7 +241,7 @@ ggSYABARB <- f.SYARace %>%
                       font = list(size = 10), showarrow = FALSE, yref = 'paper', y = -0.3))
 
 ggSYABARAS <- f.SYARace %>%
-             filter(race == "Asian/Pacific Islander, Not Hispanic") %>%
+             filter(Race == "Asian/Pacific Islander, Not Hispanic") %>%
              plot_ly( x = ~Age, y = ~Population, type = 'bar', color = I("red"),
                        text = ~indText, hoverinfo = 'text') %>%
      layout( title=list(text = paste0(grTitle,
@@ -255,7 +256,7 @@ ggSYABARAS <- f.SYARace %>%
 
 
 ggSYABARAM <- f.SYARace %>%
-             filter(race == "American Indian, Not Hispanic") %>%
+             filter(Race == "American Indian, Not Hispanic") %>%
              plot_ly( x = ~Age, y = ~Population, type = 'bar', color = I("purple"),
                        text = ~indText, hoverinfo = 'text') %>%
      layout( title=list(text = paste0(grTitle,
@@ -271,7 +272,7 @@ ggSYABARAM <- f.SYARace %>%
 
 #Restructuring data
 
-f.outData <- spread(f.SYARaceDL[,1:3],race,Population)
+f.outData <- spread(f.SYARaceDL[,1:3],Race,Population)
 
 outlist <- list("LINE" = ggSYALINE, "WHITE" = ggSYABARW, "HISP" = ggSYABARH, "BLACK" = ggSYABARB,
                 "ASIAN" = ggSYABARAS, "AMIND" = ggSYABARAM, "CHDATA" = f.outData)
