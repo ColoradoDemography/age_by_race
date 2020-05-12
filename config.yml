@@ -5,5 +5,4 @@ default:
       Database: 'dola'
       UID:  'codemog'
       PWD:  'demography'
-      Port:  5433 
-      
+      Port:  5433     
